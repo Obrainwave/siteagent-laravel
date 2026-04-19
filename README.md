@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**SiteAgent** is a lightweight, cryptographically secure enforcement SDK for Laravel applications. It allows the **ZuqoLab Control Manager** to remotely activate or suspend your application based on subscription status.
+**SiteAgent** is a lightweight, cryptographically secure enforcement SDK for Laravel applications. It is the **Core Website Manager** to remotely manage the website status.
 
 ## 🚀 Installation
 
@@ -42,15 +42,32 @@ SITE_AGENT_ENABLED=true
 
 ## 🛠 Integration
 
-### 1. Register the Middleware
-Add the `EnforceSiteAgent` middleware to your global middleware stack or specific route groups in `app/Http/Kernel.php`:
+### 1. Automated Setup
+Add the SiteAgent middleware by running the following command:
 
+```bash
+php artisan siteagent:install
+```
+
+The command will automatically detect your Laravel version and register the `EnforceSiteAgent` middleware in the global stack (`bootstrap/app.php` for Laravel 11+, or `app/Http/Kernel.php` for earlier versions).
+
+### 2. Manual Fallback
+If you prefer manual registration, add the `EnforceSiteAgent` middleware to your global middleware stack:
+
+#### Laravel 11+:
 ```php
-protected $middlewareGroups = [
-    'web' => [
-        // ...
-        \ZuqoLab\SiteAgent\Http\Middleware\EnforceSiteAgent::class,
-    ],
+// bootstrap/app.php
+->withMiddleware(function (Middleware $middleware) {
+    $middleware->append(\ZuqoLab\SiteAgent\Http\Middleware\EnforceSiteAgent::class);
+})
+```
+
+#### Laravel 10 and below:
+```php
+// app/Http/Kernel.php
+protected $middleware = [
+    // ...
+    \ZuqoLab\SiteAgent\Http\Middleware\EnforceSiteAgent::class,
 ];
 ```
 

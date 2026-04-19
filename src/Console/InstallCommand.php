@@ -41,9 +41,87 @@ class InstallCommand extends Command
         // 3. Initialize State File
         $this->info('📁 Initializing state file...');
         $stateManager->setState('suspended');
-        $this->warn('⚠️  Site has been defaulted to SUSPENDED. Ensure you configure your API keys and sync with the Control Center.');
+
+        // 4. Register Middleware Automatically
+        $this->registerMiddleware();
 
         $this->info('✅ Installation complete.');
-        $this->line('Register the middleware ZuqoLab\SiteAgent\Http\Middleware\EnforceSiteAgent::class in your bootstrap/app.php or Kernel.php');
+        $this->warn('⚠️  Site has been defaulted to SUSPENDED. Ensure you configure your API keys in .env.');
+    }
+
+    /**
+     * Attempt to register the middleware automatically.
+     */
+    protected function registerMiddleware(): void
+    {
+        $middlewareClass = \ZuqoLab\SiteAgent\Http\Middleware\EnforceSiteAgent::class;
+        
+        // 1. Check for Laravel 11+ structure (bootstrap/app.php)
+        if (file_exists(base_path('bootstrap/app.php'))) {
+            $this->info('Detected Laravel 11+ structure. Updating bootstrap/app.php...');
+            $this->updateBootstrapApp($middlewareClass);
+            return;
+        }
+
+        // 2. Fallback to Laravel 10- structure (app/Http/Kernel.php)
+        if (file_exists(app_path('Http/Kernel.php'))) {
+            $this->info('Detected Laravel 10- structure. Updating app/Http/Kernel.php...');
+            $this->updateKernel($middlewareClass);
+            return;
+        }
+
+        $this->line("Please register the middleware manually: {$middlewareClass}");
+    }
+
+    /**
+     * Update bootstrap/app.php for Laravel 11+
+     */
+    protected function updateBootstrapApp(string $class): void
+    {
+        $path = base_path('bootstrap/app.php');
+        $content = file_get_contents($path);
+
+        if (str_contains($content, $class)) {
+            $this->line('Middleware already registered.');
+            return;
+        }
+
+        // Look for ->withMiddleware(function (Middleware $middleware) [maybe : void] {
+        $pattern = '/->withMiddleware\(function\s*\(Middleware\s*\$middleware\)\s*(?::\s*\w+\s*)?\{/';
+        
+        if (preg_match($pattern, $content)) {
+            $replacement = "$0\n        \$middleware->append(\\{$class}::class);";
+            $newContent = preg_replace($pattern, $replacement, $content);
+            file_put_contents($path, $newContent);
+            $this->info('Successfully registered middleware in bootstrap/app.php.');
+        } else {
+            $this->warn('Could not automatically update bootstrap/app.php. Please configure manually.');
+        }
+    }
+
+    /**
+     * Update app/Http/Kernel.php for Laravel 10-
+     */
+    protected function updateKernel(string $class): void
+    {
+        $path = app_path('Http/Kernel.php');
+        $content = file_get_contents($path);
+
+        if (str_contains($content, $class)) {
+            $this->line('Middleware already registered.');
+            return;
+        }
+
+        // Look for protected $middleware = [
+        $pattern = '/protected\s+\$middleware\s*=\s*\[/';
+        
+        if (preg_match($pattern, $content)) {
+            $replacement = "$0\n        \\{$class}::class,";
+            $newContent = preg_replace($pattern, $replacement, $content);
+            file_put_contents($path, $newContent);
+            $this->info('Successfully registered middleware in Kernel.php.');
+        } else {
+            $this->warn('Could not automatically update Kernel.php. Please configure manually.');
+        }
     }
 }
