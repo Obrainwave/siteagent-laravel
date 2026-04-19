@@ -22,8 +22,8 @@
             text-align: center;
         }
         .container {
-            max-width: 600px;
-            padding: 40px;
+            max-width: 500px;
+            padding: 30px;
             background: white;
             border-radius: 40px;
             box-shadow: 0 20px 50px rgba(0,0,0,0.05);

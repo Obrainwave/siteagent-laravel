@@ -18,8 +18,9 @@ class EnforceSiteAgent
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Bypass for control endpoint
-        if ($request->is('api/system/control')) {
+        // Bypass for control endpoint or requests with SiteAgent headers
+        // This prevents deadlocks where a suspended site blocks the "Un-suspend" command.
+        if ($request->is('api/system/control') || $request->hasHeader('X-API-KEY')) {
             return $next($request);
         }
 
