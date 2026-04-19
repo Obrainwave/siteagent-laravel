@@ -12,7 +12,7 @@ class InstallCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'site-agent:install';
+    protected $signature = 'siteagent:install';
 
     /**
      * The console command description.

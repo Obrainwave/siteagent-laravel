@@ -14,13 +14,25 @@ composer require obrainwave/siteagent-laravel
 
 ## ⚙️ Configuration
 
-Publish the config file:
+Initialize the SDK with the built-in installation command:
 
 ```bash
-php artisan vendor:publish --provider="ZuqoLab\SiteAgent\SiteAgentServiceProvider"
+php artisan siteagent:install
 ```
 
-Configure your credentials in your `.env` file:
+This command will:
+1. Publish the `siteagent.php` config file.
+2. Publish the customizable 503 suspension views.
+3. Initialize the local `siteagent.state.json` file.
+
+Alternatively, you can manually publish specific assets:
+
+```bash
+php artisan vendor:publish --tag="siteagent-config"
+php artisan vendor:publish --tag="siteagent-views"
+```
+
+Then, configure your credentials in your `.env` file:
 
 ```env
 SITE_AGENT_API_KEY=your_public_key
