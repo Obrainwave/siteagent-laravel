@@ -55,17 +55,20 @@ class InstallCommand extends Command
     protected function registerMiddleware(): void
     {
         $middlewareClass = \ZuqoLab\SiteAgent\Http\Middleware\EnforceSiteAgent::class;
-        
-        // 1. Check for Laravel 11+ structure (bootstrap/app.php)
-        if (file_exists(base_path('bootstrap/app.php'))) {
-            $this->info('Detected Laravel 11+ structure. Updating bootstrap/app.php...');
-            $this->updateBootstrapApp($middlewareClass);
-            return;
+        $laravelVersion = app()->version();
+
+        // 1. Laravel 11+ uses bootstrap/app.php
+        if (version_compare($laravelVersion, '11.0.0', '>=')) {
+            if (file_exists(base_path('bootstrap/app.php'))) {
+                $this->info("Detected Laravel {$laravelVersion}. Updating bootstrap/app.php...");
+                $this->updateBootstrapApp($middlewareClass);
+                return;
+            }
         }
 
-        // 2. Fallback to Laravel 10- structure (app/Http/Kernel.php)
+        // 2. Laravel 10 and below uses app/Http/Kernel.php
         if (file_exists(app_path('Http/Kernel.php'))) {
-            $this->info('Detected Laravel 10- structure. Updating app/Http/Kernel.php...');
+            $this->info("Detected Laravel {$laravelVersion}. Updating app/Http/Kernel.php...");
             $this->updateKernel($middlewareClass);
             return;
         }
