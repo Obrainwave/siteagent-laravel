@@ -100,7 +100,7 @@ class InstallCommand extends Command
     }
 
     /**
-     * Update app/Http/Kernel.php for Laravel 10-
+     * Update app/Http/Kernel.php for Laravel 10 and below
      */
     protected function updateKernel(string $class): void
     {
