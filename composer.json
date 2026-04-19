@@ -1,0 +1,28 @@
+{
+    "name": "obrainwave/siteagent-laravel",
+    "description": "Silent enforcement SDK for remote website control.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "ZuqoLab Developer",
+            "email": "dev@zuqolab.com"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "illuminate/support": "^10.0|^11.0|^12.0|^13.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "ZuqoLab\\SiteAgent\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "ZuqoLab\\SiteAgent\\SiteAgentServiceProvider"
+            ]
+        }
+    }
+}

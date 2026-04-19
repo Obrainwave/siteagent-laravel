@@ -1,0 +1,5 @@
+/vendor
+/.idea
+/composer.lock
+siteagent.state.json
+.DS_Store
