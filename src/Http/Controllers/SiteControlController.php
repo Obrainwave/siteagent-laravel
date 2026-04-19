@@ -50,17 +50,25 @@ class SiteControlController extends Controller
         }
 
         // 5. Update State (Idempotent)
-        if ($action === 'suspend') {
-            $this->stateManager->setState('suspended');
-        } elseif ($action === 'activate') {
-            $this->stateManager->setState('active');
-        } else {
-            return response()->json(['message' => 'Unknown action'], 400);
-        }
+        try {
+            if ($action === 'suspend') {
+                $this->stateManager->setState('suspended');
+            } elseif ($action === 'activate') {
+                $this->stateManager->setState('active');
+            } else {
+                return response()->json(['message' => 'Unknown action'], 400);
+            }
 
-        return response()->json([
-            'status' => 'success',
-            'command_id' => $commandId
-        ]);
+            return response()->json([
+                'status' => 'success',
+                'command_id' => $commandId
+            ]);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('SiteAgent State Error: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Failed to update site state. Check storage permissions.',
+                'error' => config('app.debug') ? $e->getMessage() : null
+            ], 500);
+        }
     }
 }
