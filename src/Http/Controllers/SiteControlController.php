@@ -18,6 +18,7 @@ class SiteControlController extends Controller
      */
     public function handle(Request $request)
     {
+        \Illuminate\Support\Facades\Log::error('It got here');
         $apiKey = $request->header('X-API-KEY');
         $signature = $request->header('X-SIGNATURE');
         $timestamp = $request->header('X-TIMESTAMP');
