@@ -30,4 +30,18 @@ return [
     |
     */
     'enabled' => env('SITE_AGENT_ENABLED', true),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Redis Status Storage
+    |--------------------------------------------------------------------------
+    |
+    | Use Redis as primary storage for site status (active/suspended).
+    |
+    */
+    'redis' => [
+        'enabled' => env('SITE_AGENT_REDIS_ENABLED', false),
+        'connection' => env('SITE_AGENT_REDIS_CONNECTION', 'default'),
+        'key_prefix' => env('SITE_AGENT_REDIS_KEY', 'siteagent:state:'),
+    ],
 ];
